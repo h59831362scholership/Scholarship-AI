@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Scholarship Finder</title>
+  <script src="https://jsdelivr.net"></script>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f7f6; margin: 0; padding: 20px; }
+    .container { max-width: 800px; margin: auto; }
+    h1 { text-align: center; color: #2c3e50; }
+    .card { background: white; padding: 15px; margin: 10px 0; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .btn { background: #27ae60; color: white; padding: 8px 15px; text-decoration: none; border-radius: 5px; display: inline-block; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎓 AI Scholarship Portal</h1>
+    <div id="scholarship-list">Loading scholarships...</div>
+  </div>
+
+  <script>
+    const supabaseUrl = 'https://supabase.co';
+    const supabaseKey = 'sb_publishable_mbxJHTJE6CmjN4IxcOQAVQ_isxLD1O6';
+    const db = supabase.createClient(supabaseUrl, supabaseKey);
+
+    async function loadScholarships() {
+      const { data, error } = await db.from('scholarships').select('*');
+      const list = document.getElementById('scholarship-list');
+      if (error || !data || data.length === 0) {
+        list.innerHTML = '<div class="card">Abhi koi scholarship add nahi hui. AI jald hi add karega!</div>';
+        return;
+      }
+      list.innerHTML = data.map(s => `
+        <div class="card">
+          <h3>${s.title} (${s.country || 'International'})</h3>
+          <p><strong>Deadline:</strong> ${s.deadline || 'Open'}</p>
+          <a href="${s.link || '#'}" target="_blank" class="btn">Apply Now</a>
+        </div>
+      `).join('');
+    }
+    loadScholarships();
+  </script>
+</body>
+</html>
